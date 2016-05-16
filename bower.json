@@ -13,8 +13,7 @@
     "tests"
   ],
   "dependencies": {
-    "zepto" : "latest",
-    "underscore" : "latest",
-    "backbone" : "latest"
+    "greensock": "~1.18.4",
+    "requirejs": "~2.2.0"
   }
 }

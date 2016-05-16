@@ -1,5 +1,7 @@
-/**
-* myApp Module
-*
-* Description
-*/
+requirejs([
+	//"helper/util"
+], function() {
+    
+	console.log('hi');
+
+});

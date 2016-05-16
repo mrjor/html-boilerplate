@@ -3,32 +3,49 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-   
-    wiredep: {
+
+    bowerRequirejs: {
+        target: {
+          rjsConfig: 'develop/js/config.js',
+          options: {
+            exclude: ['requirejs']
+          }
+        }
+    },
+
+    requirejs: {
+      compile: {
+        options: {
+          baseUrl: 'develop/js',
+          mainConfigFile: 'develop/js/config.js',
+          out: 'build/js/app.min.js',
+          name: 'config',
+          include: ['vendor/requirejs/require.js'],
+        }
+      }
+    },
+
+    cssmin: {
       target: {
-        src: [
-          'develop/index.html'
-        ]
+        files: [{
+          expand: true,
+          cwd: 'develop/css',
+          src: ['*.css', '!*.min.css'],
+          dest: 'build/css',
+          ext: '.min.css'
+        }]
       }
-    },
-
-    useminPrepare :{
-      html:'develop/index.html',
-      options : {
-        dest : 'build'
-      }
-    },
-
-    usemin : {
-      html : ['build/index.html']
     },
 
     copy : {
       build : {
        expand: true,
        cwd : 'develop/',
-       src: ['**/*.html'],
-       dest: 'build'
+       src: ['index-build.html'],
+       dest: 'build/',
+       rename: function() {
+        return 'build/index.html'
+       }
       }
     },
 
@@ -60,6 +77,8 @@ module.exports = function(grunt) {
       }
     },
 
+
+
     watch: {
       options: {
           //livereload: true
@@ -82,15 +101,11 @@ module.exports = function(grunt) {
 
   });
 
-  // Load the plugin that provides the "wiredep" task.
-  grunt.loadNpmTasks('grunt-wiredep');
+  // Load the plugin that provides the "bower-requirejs" task.
+  grunt.loadNpmTasks('grunt-bower-requirejs');
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-uglify');
- // https://github.com/gruntjs/grunt-contrib-uglify
-
-  // Load the plugin that provides the "concat" task.
-  grunt.loadNpmTasks('grunt-contrib-concat');
+  // Load the plugin that provides the "requirejs" task.
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
 
   // Load the plugin that provides the "cssmin" task.
   grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -100,9 +115,6 @@ module.exports = function(grunt) {
 
   // Load the plugin that provides the "clean" task.
   grunt.loadNpmTasks('grunt-contrib-clean');
-
-    // Load the plugin that provides the "usemin" task.
-  grunt.loadNpmTasks('grunt-usemin');
 
     // Load the plugin that provides the "connect" task.
   grunt.loadNpmTasks('grunt-contrib-connect');
@@ -114,14 +126,12 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'clean:build',
     'copy:build',
-    'useminPrepare',
-    'concat',
     'cssmin',
-    'uglify',
-    'usemin',
+    'requirejs',
     'clean:tmp'
   ]);
 
+  grunt.registerTask('updateDeps', ['bowerRequirejs']);
   grunt.registerTask('serve', ['connect:dev','watch']);
   grunt.registerTask('live', ['connect:live','watch']);
 
